@@ -4,29 +4,7 @@
     For:    Walden Local Meat Co.
 */
 
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <vector>
-#include <list>
-#include <map>
-#include <sstream>
-
-using namespace std;
-
-class ZipCode {
-    public:
-        int code;
-        string group;
-        vector<int> makeupDays;
-        vector<int> deliveryDays;
-        ZipCode(int code);
-        ~ZipCode();
-        void findMakeupGroup(map<int,string> makeupGroups);
-        void findMakeupDays(vector<pair<int,int>> makeupDays);
-        void findDeliveryDays(vector<pair<int,vector<int>>> deliveryDays);
-        int algorithm(int date);
-};
+#include "zipcodes.h"
 
 ZipCode::ZipCode(int code) {
     this->code = code;
@@ -135,12 +113,70 @@ int ZipCode::algorithm(int date) {
     return 1;
 }
 
+int ZipCode::algorithm2(int date, vector<int> dates) {
+    int diff, x = 0;
+    int small = 3000;
+    vector<int> elg_MakeupDays;
+    vector<int> offsets;
+    for (int i=0; i < this->deliveryDays.size(); i++) {
+        if (this->deliveryDays[i] > date) {
+            diff = this->deliveryDays[i] - date;
+            if (diff >= 15 && diff <= 35) {
+                return this->deliveryDays[i];
+            }
+            x = i;
+        }
+    }
+    for (int i=0; i < this->makeupDays.size(); i++) {
+        diff = this->makeupDays[i] - date;
+        if (diff >= 15 && diff <= 42) {
+            elg_MakeupDays.push_back(this->makeupDays[i]);
+        }
+    }
+    if (elg_MakeupDays.size() == 0) {
+        return this->deliveryDays[x];
+    } else {
+        for (int i=0; i < elg_MakeupDays.size(); i++) {
+            if (elg_MakeupDays[i] <= date) {
+                offsets.push_back(date - elg_MakeupDays[i]);
+            } else {
+                offsets.push_back(elg_MakeupDays[i] - date);
+            }
+        }
+        for (int i=0; i < offsets.size(); i++) {
+            if (offsets[i] < small) {
+                small = offsets[i];
+                x = i;
+            }
+        }
+        dates.push_back(elg_MakeupDays[x]);
+        if (elg_MakeupDays[x]-dates[0] >= 80) {
+            return dates[0]+80;
+        } else {
+            return algorithm2(elg_MakeupDays[x], dates);
+        }
+    }
+    throw runtime_error("Unexpected outcome");
+}
+
+float ZipCode::convergence() {
+    float acc = 0;
+    int conv, date = 0;
+    int size = this->makeupDays.size()-9;
+    vector<int> dummy;
+    for (int i=0; i < size; i++) {
+        date = this->makeupDays[i];
+        acc += this->algorithm2(date, dummy)-date;
+    }
+    return acc/size;
+}
+
 /*
     @param   :  (nothing)
     @returns :  list of makeup day delivery dates paired with their routines
 */
 vector<pair<int,int>> getMakeupDays() {
-    ifstream file1("Service_day.txt");
+    ifstream file1("service_day.txt");
     ifstream file2("region_lock.txt");
     vector<pair<int, int>> makeupDays;
     vector<int> Service_day;
@@ -217,21 +253,41 @@ map<int,string> getMakeupGroups() {
     return makeupGroups;
 }
 
-int main(int argc, char** argv) {
-    if (argc != 3) {
-        cout << "Try again \n";
+vector<ZipCode*> getAllShares() {
+    ifstream file1("code.txt");
+    vector<ZipCode*> shares;
+    string data = "";
+    while (getline(file1, data, '\n')) {
+        ZipCode* zip = new ZipCode(stoi(data));
+        shares.push_back(zip);
     }
-    else {
-        ZipCode* zip = new ZipCode(atoi(argv[1]));
-        vector<pair<int,int>> makeupDays = getMakeupDays();
-        map<int,string> makeupGroups = getMakeupGroups();
-        vector<pair<int,vector<int>>> deliveryDays = getDeliveryDays();
-        zip->findMakeupGroup(makeupGroups);
-        zip->findMakeupDays(makeupDays);
-        zip->findDeliveryDays(deliveryDays);
-        cout << "Zip Code No.:  " << zip->code << '\n';
-        cout << "Makeup Group:  " << zip->group << '\n';
-        cout << "Next Delivery: " << zip->algorithm(stoi(argv[2])) << '\n';
+    file1.close();
+    return shares;
+}
+
+float successRate(vector<pair<int,int>> makeupDays, vector<ZipCode*> shares, int date) {
+    int r, convDate = 0;
+    float count = 0;
+    vector<int> dummy;
+    vector<ZipCode*> codes;
+    for (int i=0; i < makeupDays.size(); i++) {
+        if (makeupDays[i].first == date) {
+            r = makeupDays[i].second;
         }
-    return 0;
+    }
+    for (int i=0; i < shares.size(); i++) {
+        if ((shares[i]->group == "North North" && (r == 10 || r == 6 || r == 2))
+          || (shares[i]->group == "North South" && (r == 5 || r == 1))
+          || (shares[i]->group == "South East" && (r == 5 || r == 4 || r == 6))
+          || (shares[i]->group == "South West" && (r == 10 || r == 8))) {
+            codes.push_back(shares[i]);
+        }
+    }
+    for (int i=0; i < codes.size(); i++) {
+        convDate = codes[i]->algorithm2(date, dummy);
+        if (convDate-date < 60) {
+            count++;
+        }
+    }
+    return count/codes.size();
 }
