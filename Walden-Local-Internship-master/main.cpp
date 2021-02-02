@@ -6,16 +6,14 @@ int main(int argc, char** argv) {
         cout << "Try again \n";
     }
     else {
-        ZipCode* zip = new ZipCode(atoi(argv[1]));
         vector<pair<int,int>> makeupDays = getMakeupDays();
         map<int,string> makeupGroups = getMakeupGroups();
         vector<pair<int,vector<int>>> deliveryDays = getDeliveryDays();
-        zip->findMakeupGroup(makeupGroups);
-        zip->findMakeupDays(makeupDays);
-        zip->findDeliveryDays(deliveryDays);
-        cout << "Zip Code No.:  " << zip->code << '\n';
-        cout << "Makeup Group:  " << zip->group << '\n';
-        cout << "Next Delivery: " << zip->algorithm(stoi(argv[2])) << '\n';
+        ZipCode* zip = new ZipCode(atoi(argv[1]), makeupGroups, makeupDays, deliveryDays);
+        cout << "Zip Code     :  " << zip->code << '\n';
+        cout << "Makeup Group :  " << zip->group << '\n';
+        cout << "Next Delivery:  " << zip->algorithm(stoi(argv[2])) << '\n';
+        cout << "New Algorithm:  " << zip->modifiedAlgo(stoi(argv[2])) << '\n';
         }
     return 0;
 }
