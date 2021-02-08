@@ -1,6 +1,6 @@
 # Walden-Internship
 
-Includes code I have written for a SwatWorks micro-internship with Walden Local Meat Co.
+Includes code I have written for a SwatWorks micro-internship with Walden Local Meat Co. I tested and implemented a 5-step algorithm that the company uses to deliver meat to its customers at favorable, cost-efficient times.
 
 ### zipcodes.cpp
 
