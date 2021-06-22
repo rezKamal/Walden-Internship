@@ -61,139 +61,34 @@ void ZipCode::findDeliveryDays(vector<pair<int,vector<int>>> deliveryDays) {
 int ZipCode::algorithm(int date) {
   /*
       The code in this function has been REDACTED because it contains sensitive
-      information pertaining to Walden's delivery algorithm. It simply takes
-      the date of the last delivery and returns one of the eligible dates
-      of next delivery from either the vector of regular dates or the one for
-      makeup date.
+      information pertaining to Walden's delivery algorithm.
   */
     throw runtime_error("Unexpected outcome");
 }
 
+/*
+  Inputs: date of last delivery (date), current date (initial), and
+          date after which algorithm will stop looking for the next
+          eligible date (cutoff)
+  Returns: date of next REGULAR delivery OR cutoff date, whichever
+          comes sooner.
+*/
 int ZipCode::algorithm2(int date, int initial, int cutoff) {
-    int diff, x = 0;
-    int small = 3000;
-    vector<int> elg_MakeupDays;
-    vector<int> offsets;
-    for (int i=0; i < this->deliveryDays.size(); i++) {
-        if (this->deliveryDays[i] > date) {
-            diff = this->deliveryDays[i] - date;
-            if (diff >= 15 && diff <= 35) {
-                return this->deliveryDays[i];
-            }
-            x = i;
-            break;
-        }
-    }
-    for (int i=0; i < this->makeupDays.size(); i++) {
-        diff = this->makeupDays[i] - date;
-        if (diff >= 15 && diff <= 42) {
-            elg_MakeupDays.push_back(this->makeupDays[i]);
-        }
-    }
-    if (elg_MakeupDays.size() == 0) {
-        return this->deliveryDays[x];
-    } else {
-        for (int i=0; i < elg_MakeupDays.size(); i++) {
-            offsets.push_back(elg_MakeupDays[i]-date);
-        }
-        for (int i=0; i < offsets.size(); i++) {
-            if (abs(offsets[i]-30) < small) {
-                small = abs(offsets[i]-30);
-                x = i;
-            }
-        }
-        if (elg_MakeupDays[x]-initial >= cutoff) {
-            return initial+cutoff;
-        } else {
-            return algorithm2(elg_MakeupDays[x], initial, cutoff);
-        }
-    }
+    /*
+       The code in this function has been REDACTED because it contains sensitive
+       information pertaining to Walden's delivery algorithm.
+    */
     throw runtime_error("Unexpected outcome");
 }
 
+/*
+    Tweaked version of algorithm()
+*/
 int ZipCode::modifiedAlgo(int date) {
-    int diff, x = 0;
-    int small = 3000;
-    vector<int> elg_MakeupDays;
-    vector<int> offsets;
-    for (int i=0; i < this->deliveryDays.size(); i++) {
-        if (this->deliveryDays[i] > date) {
-            diff = this->deliveryDays[i] - date;
-            if (diff >= 15 && diff <= 35) {
-                return this->deliveryDays[i];
-            } else if (diff < 5) {
-                continue;
-            } else {
-                x = i;
-                break;
-            }
-        }
-    }
-    for (int i=0; i < this->makeupDays.size(); i++) {
-        diff = this->makeupDays[i] - date;
-        if (diff >= 15 && diff <= 42) {
-            elg_MakeupDays.push_back(this->makeupDays[i]);
-        }
-    }
-    if (elg_MakeupDays.size() == 0) {
-        return this->deliveryDays[x];
-    } else {
-        for (int i=0; i < elg_MakeupDays.size(); i++) {
-            offsets.push_back(elg_MakeupDays[i]-date);
-        }
-        for (int i=0; i < offsets.size(); i++) {
-            if (abs(offsets[i]-30) < small) {
-                small = abs(offsets[i]-30);
-                x = i;
-            }
-        }
-        return elg_MakeupDays[x];
-    }
-    throw runtime_error("Unexpected outcome");
-}
-
-int ZipCode::modifiedAlgo2(int date, int initial, int cutoff) {
-    int diff, x = 0;
-    int small = 3000;
-    vector<int> elg_MakeupDays;
-    vector<int> offsets;
-    for (int i=0; i < this->deliveryDays.size(); i++) {
-        if (this->deliveryDays[i] > date) {
-            diff = this->deliveryDays[i] - date;
-            if (diff >= 15 && diff <= 35) {
-                return this->deliveryDays[i];
-            } else if (diff < 5) {
-                continue;
-            } else {
-            x = i;
-            break;
-            }
-        }
-    }
-    for (int i=0; i < this->makeupDays.size(); i++) {
-        diff = this->makeupDays[i] - date;
-        if (diff >= 15 && diff <= 42) {
-            elg_MakeupDays.push_back(this->makeupDays[i]);
-        }
-    }
-    if (elg_MakeupDays.size() == 0) {
-        return this->deliveryDays[x];
-    } else {
-        for (int i=0; i < elg_MakeupDays.size(); i++) {
-            offsets.push_back(elg_MakeupDays[i]-date);
-        }
-        for (int i=0; i < offsets.size(); i++) {
-            if (abs(offsets[i]-30) < small) {
-                small = abs(offsets[i]-30);
-                x = i;
-            }
-        }
-        if (elg_MakeupDays[x]-initial >= cutoff) {
-            return initial+cutoff;
-        } else {
-            return modifiedAlgo2(elg_MakeupDays[x], initial, cutoff);
-        }
-    }
+/*
+   The code in this function has been REDACTED because it contains sensitive
+   information pertaining to Walden's delivery algorithm.
+*/
     throw runtime_error("Unexpected outcome");
 }
 
@@ -214,20 +109,6 @@ float ZipCode::convergence(int algo) {
     }
     return acc/count;
 }
-
-/* float ZipCode::modifiedConvergence() {
-    int date, count = 0;
-    float acc = 0;
-    int size = this->makeupDays.size();
-    for (int i=0; i < size; i++) {
-        date = this->makeupDays[i];
-        if (date > 700 && date < 935) {
-            acc += (this->modifiedAlgo2(date, date, cutoff)-date);
-            count++;
-        }
-    }
-    return acc/count;
-} */
 
 /*
     @param   :  (nothing)
@@ -353,29 +234,3 @@ float successRate(vector<pair<int,int>> makeupDays, vector<ZipCode*> shares, int
     }
     return count/codes.size();
 }
-
-/* float modifiedSuccess(vector<pair<int,int>> makeupDays, vector<ZipCode*> shares, int date) {
-    int r, convDate = 0;
-    float count = 0;
-    vector<ZipCode*> codes;
-    for (int i=0; i < makeupDays.size(); i++) {
-        if (makeupDays[i].first == date) {
-            r = makeupDays[i].second;
-        }
-    }
-    for (int i=0; i < shares.size(); i++) {
-        if ((shares[i]->group == "North North" && (r == 10 || r == 6 || r == 2))
-          || (shares[i]->group == "North South" && (r == 5 || r == 1))
-          || (shares[i]->group == "South East" && (r == 5 || r == 4 || r == 6))
-          || (shares[i]->group == "South West" && (r == 10 || r == 8))) {
-            codes.push_back(shares[i]);
-        }
-    }
-    for (int i=0; i < codes.size(); i++) {
-        convDate = codes[i]->modifiedAlgo2(date, date, 60);
-        if (convDate-date < 60) {
-            count++;
-        }
-    }
-    return count/codes.size();   
-} */
