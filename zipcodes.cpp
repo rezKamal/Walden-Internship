@@ -59,41 +59,13 @@ void ZipCode::findDeliveryDays(vector<pair<int,vector<int>>> deliveryDays) {
     Returns :  date of next delivery based on algorithm
 */
 int ZipCode::algorithm(int date) {
-    int diff, x = 0;
-    int small = 3000;
-    vector<int> elg_MakeupDays;
-    vector<int> offsets;
-    for (int i=0; i < this->deliveryDays.size(); i++) {
-        if (this->deliveryDays[i] > date) {
-            diff = this->deliveryDays[i] - date;
-            if (diff >= 15 && diff <= 35) {
-                return this->deliveryDays[i];
-            } else {
-                x = i;
-                break;
-            }
-        }
-    }
-    for (int i=0; i < this->makeupDays.size(); i++) {
-        diff = this->makeupDays[i] - date;
-        if (diff >= 15 && diff <= 42) {
-            elg_MakeupDays.push_back(this->makeupDays[i]);
-        }
-    }
-    if (elg_MakeupDays.size() == 0) {
-        return this->deliveryDays[x];
-    } else {
-        for (int i=0; i < elg_MakeupDays.size(); i++) {
-            offsets.push_back(elg_MakeupDays[i]-date);
-        }
-        for (int i=0; i < offsets.size(); i++) {
-            if (abs(offsets[i]-30) < small) {
-                small = abs(offsets[i]-30);
-                x = i;
-            }
-        }
-        return elg_MakeupDays[x];
-    }
+  /*
+      The code in this function has been REDACTED because it contains sensitive
+      information pertaining to Walden's delivery algorithm. It simply takes
+      the date of the last delivery and returns one of the eligible dates
+      of next delivery from either the vector of regular dates or the one for
+      makeup date.
+  */
     throw runtime_error("Unexpected outcome");
 }
 
