@@ -18,6 +18,6 @@ Program will test the original and new delivery algorithms by looking at average
 
 These were originally proprietary input which included delivery data with information about shares and regions. The proprietary information within them has been redacted, and each file is replaced with a short version
 
-### project.pdf
+### recurrence_modeling.pdf
 
 This is a write-up of the work I did throughout the duration of my internship. Similarly to the code, I have redacted some sensitive information that Walden has asked me not to share. It goes extensively into explaining the data analysis techniques I used and the different functions I implemented.
